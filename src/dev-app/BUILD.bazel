@@ -1,0 +1,206 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@build_bazel_rules_nodejs//:index.bzl", "pkg_web")
+load("@build_bazel_rules_nodejs//internal/common:devmode_js_sources.bzl", "devmode_js_sources")
+load("//src/cdk:config.bzl", "CDK_ENTRYPOINTS")
+load("//src/cdk-experimental:config.bzl", "CDK_EXPERIMENTAL_ENTRYPOINTS")
+load("//src/material:config.bzl", "MATERIAL_ENTRYPOINTS")
+load("//src/material-experimental:config.bzl", "MATERIAL_EXPERIMENTAL_ENTRYPOINTS")
+load("//tools:defaults.bzl", "ng_module", "sass_binary")
+load("//tools/bazel:expand_template.bzl", "expand_template")
+load("//tools/dev-server:index.bzl", "dev_server")
+
+ng_module(
+    name = "dev-app",
+    srcs = [
+        "dev-app.ts",
+        "main.ts",
+        "main-module.ts",
+    ],
+    deps = [
+        "//src/cdk/bidi",
+        "//src/cdk/overlay",
+        "//src/dev-app/autocomplete",
+        "//src/dev-app/badge",
+        "//src/dev-app/baseline",
+        "//src/dev-app/bottom-sheet",
+        "//src/dev-app/button",
+        "//src/dev-app/button-toggle",
+        "//src/dev-app/card",
+        "//src/dev-app/checkbox",
+        "//src/dev-app/chips",
+        "//src/dev-app/connected-overlay",
+        "//src/dev-app/datepicker",
+        "//src/dev-app/dev-app",
+        "//src/dev-app/dialog",
+        "//src/dev-app/drag-drop",
+        "//src/dev-app/drawer",
+        "//src/dev-app/example",
+        "//src/dev-app/examples-page",
+        "//src/dev-app/expansion",
+        "//src/dev-app/focus-origin",
+        "//src/dev-app/focus-trap",
+        "//src/dev-app/google-map",
+        "//src/dev-app/grid-list",
+        "//src/dev-app/icon",
+        "//src/dev-app/input",
+        "//src/dev-app/list",
+        "//src/dev-app/live-announcer",
+        "//src/dev-app/mdc-button",
+        "//src/dev-app/mdc-card",
+        "//src/dev-app/mdc-checkbox",
+        "//src/dev-app/mdc-chips",
+        "//src/dev-app/mdc-menu",
+        "//src/dev-app/mdc-progress-bar",
+        "//src/dev-app/mdc-radio",
+        "//src/dev-app/mdc-slide-toggle",
+        "//src/dev-app/mdc-slider",
+        "//src/dev-app/mdc-snackbar",
+        "//src/dev-app/mdc-table",
+        "//src/dev-app/mdc-tabs",
+        "//src/dev-app/menu",
+        "//src/dev-app/paginator",
+        "//src/dev-app/platform",
+        "//src/dev-app/popover-edit",
+        "//src/dev-app/portal",
+        "//src/dev-app/progress-bar",
+        "//src/dev-app/progress-spinner",
+        "//src/dev-app/radio",
+        "//src/dev-app/ripple",
+        "//src/dev-app/screen-type",
+        "//src/dev-app/select",
+        "//src/dev-app/sidenav",
+        "//src/dev-app/slide-toggle",
+        "//src/dev-app/slider",
+        "//src/dev-app/snack-bar",
+        "//src/dev-app/stepper",
+        "//src/dev-app/table",
+        "//src/dev-app/tabs",
+        "//src/dev-app/toolbar",
+        "//src/dev-app/tooltip",
+        "//src/dev-app/tree",
+        "//src/dev-app/typography",
+        "//src/dev-app/virtual-scroll",
+        "//src/dev-app/youtube-player",
+        "//src/material/core",
+        "@npm//@angular/router",
+    ],
+)
+
+sass_binary(
+    name = "theme",
+    src = "theme.scss",
+    include_paths = [
+        "external/npm/node_modules",
+    ],
+    deps = [
+        "//src/material-experimental/mdc-slider:mdc_slider_scss_lib",
+        "//src/material-experimental/mdc-theming:all_themes",
+        "//src/material-experimental/mdc-typography:all_typography",
+        "//src/material-experimental/popover-edit:popover_edit_scss_lib",
+        "//src/material/core:theming_scss_lib",
+    ],
+)
+
+expand_template(
+    name = "system-config",
+    configuration_env_vars = ["angular_ivy_enabled"],
+    output_name = "system-config.js",
+    substitutions = {
+        "$CDK_ENTRYPOINTS_TMPL": str(CDK_ENTRYPOINTS),
+        "$CDK_EXPERIMENTAL_ENTRYPOINTS_TMPL": str(CDK_EXPERIMENTAL_ENTRYPOINTS),
+        "$MATERIAL_ENTRYPOINTS_TMPL": str(MATERIAL_ENTRYPOINTS),
+        "$MATERIAL_EXPERIMENTAL_ENTRYPOINTS_TMPL": str(MATERIAL_EXPERIMENTAL_ENTRYPOINTS),
+    },
+    template = "system-config-tmpl.js",
+)
+
+# File group for all static files which are needed to serve the dev-app. These files are
+# used in the devserver as runfiles and will be copied into the static web package that can
+# be deployed on static hosting services (like firebase).
+filegroup(
+    name = "dev_app_static_files",
+    srcs = [
+        "favicon.ico",
+        "index.html",
+        "system-rxjs-operators.js",
+        ":system-config",
+        ":theme",
+        "//src/dev-app/icon:icon_demo_assets",
+        "@npm//:node_modules/@material/animation/dist/mdc.animation.js",
+        "@npm//:node_modules/@material/auto-init/dist/mdc.autoInit.js",
+        "@npm//:node_modules/@material/base/dist/mdc.base.js",
+        "@npm//:node_modules/@material/checkbox/dist/mdc.checkbox.js",
+        "@npm//:node_modules/@material/chips/dist/mdc.chips.js",
+        "@npm//:node_modules/@material/data-table/dist/mdc.dataTable.js",
+        "@npm//:node_modules/@material/dialog/dist/mdc.dialog.js",
+        "@npm//:node_modules/@material/dom/dist/mdc.dom.js",
+        "@npm//:node_modules/@material/drawer/dist/mdc.drawer.js",
+        "@npm//:node_modules/@material/floating-label/dist/mdc.floatingLabel.js",
+        "@npm//:node_modules/@material/form-field/dist/mdc.formField.js",
+        "@npm//:node_modules/@material/grid-list/dist/mdc.gridList.js",
+        "@npm//:node_modules/@material/icon-button/dist/mdc.iconButton.js",
+        "@npm//:node_modules/@material/line-ripple/dist/mdc.lineRipple.js",
+        "@npm//:node_modules/@material/linear-progress/dist/mdc.linearProgress.js",
+        "@npm//:node_modules/@material/list/dist/mdc.list.js",
+        "@npm//:node_modules/@material/menu-surface/dist/mdc.menuSurface.js",
+        "@npm//:node_modules/@material/menu/dist/mdc.menu.js",
+        "@npm//:node_modules/@material/notched-outline/dist/mdc.notchedOutline.js",
+        "@npm//:node_modules/@material/radio/dist/mdc.radio.js",
+        "@npm//:node_modules/@material/ripple/dist/mdc.ripple.js",
+        "@npm//:node_modules/@material/select/dist/mdc.select.js",
+        "@npm//:node_modules/@material/slider/dist/mdc.slider.js",
+        "@npm//:node_modules/@material/snackbar/dist/mdc.snackbar.js",
+        "@npm//:node_modules/@material/switch/dist/mdc.switch.js",
+        "@npm//:node_modules/@material/tab-bar/dist/mdc.tabBar.js",
+        "@npm//:node_modules/@material/tab-indicator/dist/mdc.tabIndicator.js",
+        "@npm//:node_modules/@material/tab-scroller/dist/mdc.tabScroller.js",
+        "@npm//:node_modules/@material/tab/dist/mdc.tab.js",
+        "@npm//:node_modules/@material/textfield/dist/mdc.textfield.js",
+        "@npm//:node_modules/@material/top-app-bar/dist/mdc.topAppBar.js",
+        "@npm//:node_modules/@webcomponents/custom-elements/custom-elements.min.js",
+        "@npm//:node_modules/core-js/client/core.js",
+        "@npm//:node_modules/moment/min/moment-with-locales.min.js",
+        "@npm//:node_modules/rxjs/bundles/rxjs.umd.min.js",
+        "@npm//:node_modules/systemjs/dist/system.js",
+        "@npm//:node_modules/tslib/tslib.js",
+        "@npm//:node_modules/zone.js/dist/zone.js",
+    ],
+)
+
+dev_server(
+    name = "devserver",
+    srcs = [":dev_app_static_files"],
+    additional_root_paths = [
+        "npm/node_modules",
+        # Needed for compatibility with "pkg_web" which always uses the tree
+        # artifact output as workspace root.
+        "angular_material",
+    ],
+    tags = ["manual"],
+    deps = [
+        ":dev-app",
+    ],
+)
+
+# Collects all ES5 JavaScript files which are required to serve the dev-app. By default,
+# ts_library and ng_module targets only expose the type definition files as outputs.
+devmode_js_sources(
+    name = "dev_app_js_sources",
+    tags = ["manual"],
+    deps = [":dev-app"],
+)
+
+# Target that builds a static web package of the dev-app. The web package can be
+# deployed on static hosting services (such as firebase).
+pkg_web(
+    name = "web_package",
+    srcs = [
+        ":dev_app_js_sources",
+        ":dev_app_static_files",
+    ],
+    additional_root_paths = [
+        "npm/node_modules",
+    ],
+    tags = ["manual"],
+)

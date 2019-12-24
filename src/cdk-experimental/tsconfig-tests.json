@@ -1,0 +1,29 @@
+{
+  "extends": "../bazel-tsconfig-build.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "../../dist/packages/cdk-experimental",
+    "rootDir": ".",
+    "rootDirs": [
+      ".",
+      "../../dist/packages/cdk-experimental"
+    ],
+    "importHelpers": false,
+    "module": "commonjs",
+    "target": "es5",
+    "types": ["jasmine"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "@angular/cdk/*": ["../../dist/packages/cdk/*"],
+      "@angular/cdk-experimental/*": ["./*"]
+    }
+  },
+  "include": [
+    "**/index.ts",
+    "**/*.spec.ts"
+  ],
+  "exclude": [
+    "**/*.e2e.spec.ts"
+  ]
+}

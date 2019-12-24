@@ -1,0 +1,14 @@
+package(default_visibility = ["//visibility:public"])
+
+load("//:rollup-globals.bzl", "ROLLUP_GLOBALS")
+
+exports_files([
+    "LICENSE",
+    "scss-bundle.config.json",
+])
+
+genrule(
+    name = "rollup_globals",
+    outs = ["rollup_globals.json"],
+    cmd = "echo '%s' > $@" % ROLLUP_GLOBALS,
+)

@@ -1,0 +1,27 @@
+package(default_visibility = ["//visibility:public"])
+
+load("//tools:defaults.bzl", "ng_module", "sass_binary")
+
+ng_module(
+    name = "mdc-chips",
+    srcs = glob(["**/*.ts"]),
+    assets = [
+        "mdc-chips-demo.html",
+        ":mdc_chips_demo_scss",
+    ],
+    deps = [
+        "//src/material-experimental/mdc-chips",
+        "//src/material/button",
+        "//src/material/card",
+        "//src/material/checkbox",
+        "//src/material/form-field",
+        "//src/material/icon",
+        "//src/material/toolbar",
+        "@npm//@angular/router",
+    ],
+)
+
+sass_binary(
+    name = "mdc_chips_demo_scss",
+    src = "mdc-chips-demo.scss",
+)

@@ -1,0 +1,23 @@
+package(default_visibility = ["//visibility:public"])
+
+load("//tools:defaults.bzl", "ng_module", "sass_binary")
+
+ng_module(
+    name = "screen-type",
+    srcs = glob(["**/*.ts"]),
+    assets = [
+        "screen-type-demo.html",
+        ":screen_type_demo_scss",
+    ],
+    deps = [
+        "//src/cdk/layout",
+        "//src/material/grid-list",
+        "//src/material/icon",
+        "@npm//@angular/router",
+    ],
+)
+
+sass_binary(
+    name = "screen_type_demo_scss",
+    src = "screen-type-demo.scss",
+)

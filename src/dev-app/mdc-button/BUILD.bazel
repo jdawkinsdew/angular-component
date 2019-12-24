@@ -1,0 +1,22 @@
+package(default_visibility = ["//visibility:public"])
+
+load("//tools:defaults.bzl", "ng_module", "sass_binary")
+
+ng_module(
+    name = "mdc-button",
+    srcs = glob(["**/*.ts"]),
+    assets = [
+        "mdc-button-demo.html",
+        ":mdc_button_demo_scss",
+    ],
+    deps = [
+        "//src/material-experimental/mdc-button",
+        "//src/material/icon",
+        "@npm//@angular/router",
+    ],
+)
+
+sass_binary(
+    name = "mdc_button_demo_scss",
+    src = "mdc-button-demo.scss",
+)

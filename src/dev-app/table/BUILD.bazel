@@ -1,0 +1,15 @@
+package(default_visibility = ["//visibility:public"])
+
+load("//tools:defaults.bzl", "ng_module")
+
+ng_module(
+    name = "table",
+    srcs = glob(["**/*.ts"]),
+    assets = ["table-demo.html"],
+    deps = [
+        "//src/components-examples/cdk/table",
+        "//src/components-examples/material/table",
+        "//src/dev-app/example",
+        "@npm//@angular/router",
+    ],
+)

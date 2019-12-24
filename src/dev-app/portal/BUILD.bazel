@@ -1,0 +1,21 @@
+package(default_visibility = ["//visibility:public"])
+
+load("//tools:defaults.bzl", "ng_module", "sass_binary")
+
+ng_module(
+    name = "portal",
+    srcs = glob(["**/*.ts"]),
+    assets = [
+        "portal-demo.html",
+        ":portal_demo_scss",
+    ],
+    deps = [
+        "//src/cdk/portal",
+        "@npm//@angular/router",
+    ],
+)
+
+sass_binary(
+    name = "portal_demo_scss",
+    src = "portal-demo.scss",
+)
